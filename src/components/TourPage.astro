@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Photo from './Photo.astro';
+import { getImage } from 'astro:assets';
+import { getImg } from '../lib/images';
+import { SITE, url, waLink, type Lang } from '../lib/site';
+import { t } from '../i18n/ui';
+import type { LocTour } from '../lib/tours';
+
+const { lang, tour } = Astro.props as { lang: Lang; tour: LocTour };
+const ui = t(lang);
+const og = (await getImage({ src: getImg(tour.image), width: 1200, height: 630, fit: 'cover', format: 'jpeg' })).src;
+const path = `tours/${tour.slug}`;
+const pageUrl = new URL(url(lang, path), Astro.site).href;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TouristTrip',
+    name: tour.title,
+    description: tour.summary,
+    image: new URL(og, Astro.site).href,
+    url: pageUrl,
+    inLanguage: lang,
+    touristType: ui.cats[tour.category],
+    provider: { '@type': 'TravelAgency', name: SITE.name, url: SITE.url, telephone: SITE.phone, email: SITE.email },
+    itinerary: {
+      '@type': 'ItemList',
+      itemListElement: tour.itinerary.map((s, i) => ({ '@type': 'ListItem', position: i + 1, name: `${s.time}: ${s.text}` })),
+    },
+    ...(tour.price ? { offers: { '@type': 'Offer', description: tour.price, url: pageUrl } } : {}),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: new URL(url(lang), Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: tour.title, item: pageUrl },
+    ],
+  },
+];
+---
+<Layout lang={lang} path={path} title={`${tour.title} · ${SITE.name}`} description={ui.tourMetaDesc(tour.title, tour.summary)} image={og} jsonLd={jsonLd} ogType="article">
+  <div class="tour-page">
+    <a class="back" href={`${url(lang)}#tours`}>← {ui.allTours}</a>
+    <div class="tour-hero">
+      <Photo name={tour.image} alt={tour.title} eager sizes="(min-width: 900px) 50vw, 100vw" widths={[640, 960, 1280]} />
+      <div class="tour-detail">
+        <div class="tour-meta">
+          <span class="chip chip--sun">{ui.cats[tour.category]}</span>
+          <span class="chip chip--sun">{tour.duration}</span>
+          <span class="chip chip--sun">{ui.level}: {ui.levels[tour.level]}</span>
+          {tour.price && <span class="chip chip--sun">{ui.price}: {tour.price}</span>}
+        </div>
+        <h1>{tour.title}</h1>
+        <p class="tour-detail__sum" style="font-size:18px">{tour.summary}</p>
+        <div class="tour-detail__actions">
+          <a class="btn btn--ink" href={waLink(ui.waTour(tour.title))} target="_blank" rel="noopener">{ui.book}</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-cols">
+      <section class="panel panel--wide">
+        <h2>{ui.itinerary}</h2>
+        {tour.itinerary.map((s) => <div class="step"><b>{s.time}</b><span>{s.text}</span></div>)}
+      </section>
+      {tour.includes.length > 0 && (
+        <section class="panel">
+          <h2>{ui.includes}</h2>
+          <ul class="ticks">{tour.includes.map((i) => <li>{i}</li>)}</ul>
+        </section>
+      )}
+      {tour.bring.length > 0 && (
+        <section class="panel">
+          <h2>{ui.bring}</h2>
+          <ul class="ticks">{tour.bring.map((i) => <li>{i}</li>)}</ul>
+        </section>
+      )}
+    </div>
+    <div style="text-align:center;margin:28px 0 0">
+      <a class="btn btn--ink" href={waLink(ui.waTour(tour.title))} target="_blank" rel="noopener">{ui.book}</a>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-negro.png';
+import logoWhite from '../assets/logo-blanco.png';
+import { url, SITE, type Lang } from '../lib/site';
+import { t } from '../i18n/ui';
+
+interface Props { lang: Lang; altPath: { es: string; en: string } }
+const { lang, altPath } = Astro.props;
+const ui = t(lang);
+const home = url(lang);
+const links = [
+  ['tours', ui.nav.tours],
+  ['camino', ui.nav.camino],
+  ['nosotros', ui.nav.about],
+  ['galeria', ui.nav.gallery],
+  ['contacto', ui.nav.contact],
+];
+---
+<header class="nav" id="top">
+  <a class="nav__logo" href={home} aria-label={SITE.name}>
+    <Image src={logo} alt={SITE.name} width={89} height={38} densities={[2, 3]} format="webp" loading="eager" />
+  </a>
+  <nav class="nav__links" aria-label="Principal">
+    {links.map(([id, label]) => <a href={`${home}#${id}`}>{label}</a>)}
+  </nav>
+  <span class="nav__spacer"></span>
+  <div class="lang" role="group" aria-label={ui.langLabel}>
+    <a href={altPath.es} hreflang="es" lang="es" aria-current={lang === 'es' ? 'true' : undefined}>ES</a>
+    <a href={altPath.en} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>EN</a>
+  </div>
+  <button class="nav__burger" type="button" aria-label={ui.menu} aria-expanded="false" aria-controls="mpanel" data-burger><span></span></button>
+</header>
+
+<div class="mpanel" id="mpanel" role="dialog" aria-modal="true" aria-label={ui.menu} hidden>
+  <div class="mpanel__top">
+    <Image src={logoWhite} alt={SITE.name} width={89} height={38} densities={[2, 3]} format="webp" loading="lazy" />
+    <button class="mpanel__close" type="button" aria-label={ui.closeMenu} data-mclose>×</button>
+  </div>
+  <nav aria-label="Principal">
+    {links.map(([id, label]) => <a href={`${home}#${id}`} data-mlink>{label}</a>)}
+  </nav>
+  <div class="lang" role="group" aria-label={ui.langLabel}>
+    <a href={altPath.es} hreflang="es" lang="es" aria-current={lang === 'es' ? 'true' : undefined}>ES</a>
+    <a href={altPath.en} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>EN</a>
+  </div>
+</div>
+
+<script>
+  const panel = document.getElementById('mpanel') as HTMLElement;
+  const burger = document.querySelector('[data-burger]') as HTMLButtonElement;
+  const setOpen = (open: boolean) => {
+    panel.hidden = !open;
+    panel.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('lock', open);
+    if (open) (panel.querySelector('[data-mclose]') as HTMLElement).focus();
+    else burger.focus();
+  };
+  burger.addEventListener('click', () => setOpen(true));
+  panel.querySelector('[data-mclose]')!.addEventListener('click', () => setOpen(false));
+  panel.querySelectorAll('[data-mlink]').forEach((a) => a.addEventListener('click', () => { panel.hidden = true; panel.classList.remove('open'); document.body.classList.remove('lock'); burger.setAttribute('aria-expanded', 'false'); }));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) setOpen(false); });
+  // Focus atrapado dentro del panel
+  panel.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const f = [...panel.querySelectorAll<HTMLElement>('a[href],button')];
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+  matchMedia('(min-width: 901px)').addEventListener('change', (m) => { if (m.matches && !panel.hidden) setOpen(false); });
+</script>

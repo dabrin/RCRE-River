@@ -1,0 +1,9 @@
+---
+import TourPage from '../../../components/TourPage.astro';
+import { getTours, localize } from '../../../lib/tours';
+export async function getStaticPaths() {
+  return (await getTours()).map((e) => ({ params: { slug: e.id }, props: { tour: localize(e, 'en') } }));
+}
+const { tour } = Astro.props;
+---
+<TourPage lang="en" tour={tour} />

@@ -1,0 +1,95 @@
+[
+  {
+    "type": "video",
+    "pending": true,
+    "poster": "rafting-canon.jpeg",
+    "alt_es": "Video de nuestras salidas (próximamente)",
+    "alt_en": "Video from our trips (coming soon)",
+    "size": "big",
+    "_todo": "Reemplazar con \"src\": \"/videos/archivo.mp4\" o \"youtube\": \"ID_DEL_VIDEO\""
+  },
+  {
+    "type": "image",
+    "image": "rafting-cascada.jpeg",
+    "alt_es": "Grupo de rafting bajando una cascada",
+    "alt_en": "Rafting group dropping down a waterfall",
+    "size": "normal"
+  },
+  {
+    "type": "image",
+    "image": "perezoso.jpeg",
+    "alt_es": "Perezoso en un árbol",
+    "alt_en": "Sloth in a tree",
+    "size": "tall"
+  },
+  {
+    "type": "image",
+    "image": "montanas.jpeg",
+    "alt_es": "Montañas de Costa Rica",
+    "alt_en": "Costa Rican mountains",
+    "size": "normal"
+  },
+  {
+    "type": "image",
+    "image": "catarata-poza.jpeg",
+    "alt_es": "Catarata y poza natural",
+    "alt_en": "Waterfall and natural pool",
+    "size": "normal"
+  },
+  {
+    "type": "image",
+    "image": "rana.jpeg",
+    "alt_es": "Rana en la selva",
+    "alt_en": "Frog in the rainforest",
+    "size": "tall"
+  },
+  {
+    "type": "image",
+    "image": "grupo-selva.jpeg",
+    "alt_es": "Grupo caminando en la selva",
+    "alt_en": "Group hiking in the jungle",
+    "size": "normal"
+  },
+  {
+    "type": "image",
+    "image": "playa.jpeg",
+    "alt_es": "Playa de Costa Rica",
+    "alt_en": "Costa Rican beach",
+    "size": "normal"
+  },
+  {
+    "type": "image",
+    "image": "kayak.jpeg",
+    "alt_es": "Kayak en el río",
+    "alt_en": "Kayaking on the river",
+    "size": "tall"
+  },
+  {
+    "type": "image",
+    "image": "mariposa.jpeg",
+    "alt_es": "Mariposa",
+    "alt_en": "Butterfly",
+    "size": "normal"
+  },
+  {
+    "type": "image",
+    "image": "canon.jpeg",
+    "alt_es": "Cañón de río",
+    "alt_en": "River canyon",
+    "size": "normal"
+  },
+  {
+    "type": "image",
+    "image": "atardecer.jpeg",
+    "alt_es": "Atardecer",
+    "alt_en": "Sunset",
+    "size": "tall"
+  },
+  {
+    "type": "image",
+    "image": "panorama.jpeg",
+    "alt_es": "Panorama del paisaje",
+    "alt_en": "Landscape panorama",
+    "size": "normal"
+  }
+]

@@ -1,0 +1,66 @@
+---
+import Photo from './Photo.astro';
+import { getTours, localize } from '../lib/tours';
+import { url, waLink, type Lang } from '../lib/site';
+import { t } from '../i18n/ui';
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const tours = (await getTours()).map((e) => localize(e, lang));
+const kinds = ['all', 'day', 'weekend', 'multi'] as const;
+---
+<section id="tours" class="section reveal" data-tours>
+  <div class="tours-head">
+    <div>
+      <h2 class="h2">{ui.toursTitle}</h2>
+      <p class="sub">{ui.toursSub}</p>
+    </div>
+    <div class="filters" role="group" aria-label={ui.kindsLabel}>
+      {kinds.map((k) => <button type="button" data-filter={k} aria-pressed={k === 'all' ? 'true' : 'false'}>{ui.kinds[k]}</button>)}
+    </div>
+  </div>
+
+  <div class="tours-grid">
+    {tours.map((x) => (
+      <button type="button" class="tour-card" data-tour={x.slug} data-kind={x.kind} aria-haspopup="dialog">
+        <Photo as="span" name={x.image} sizes="(min-width: 1320px) 300px, (min-width: 640px) 33vw, 100vw" widths={[400, 640, 900]} />
+        <span class="tour-card__shade"></span>
+        <span class="tour-card__chips">
+          <span class="chip chip--white">{ui.cats[x.category]}</span>
+          <span class="chip chip--sun">{x.duration}</span>
+        </span>
+        <span class="tour-card__body">
+          <span class="tour-card__title" style="display:block">{x.title}</span>
+          <span class="tour-card__sum" style="display:block">{x.summary}</span>
+          <span class="tour-card__more">{ui.seeIt}</span>
+        </span>
+      </button>
+    ))}
+  </div>
+
+  {tours.map((x) => (
+    <div hidden id={`tpl-${x.slug}`}>
+      <div class="tour-dialog__box">
+        <Photo name={x.image} class="tour-dialog__img" sizes="(min-width: 820px) 410px, 100vw" widths={[480, 820]} />
+        <div class="tour-detail">
+          <div class="tour-detail__top">
+            <span class="chip chip--sun">{x.duration} · {ui.levels[x.level]}</span>
+            <button type="button" class="x-btn" aria-label={ui.close} data-close>×</button>
+          </div>
+          <h3>{x.title}</h3>
+          <p class="tour-detail__sum">{x.summary}</p>
+          <div class="steps-title">{ui.itinerary}</div>
+          {x.itinerary.map((s) => <div class="step"><b>{s.time}</b><span>{s.text}</span></div>)}
+          <div class="tour-detail__actions">
+            <a class="btn btn--ink" href={waLink(ui.waTour(x.title))} target="_blank" rel="noopener">{ui.book}</a>
+            <a class="btn btn--soft" href={url(lang, `tours/${x.slug}`)}>{ui.seeTour}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  ))}
+
+  <dialog id="tour-dialog" class="tour-dialog" aria-labelledby="tour-dialog-title"></dialog>
+</section>
+
+<script src="../scripts/tours.ts"></script>

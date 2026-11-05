@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://realcostaricaexperiences.com/sitemap-index.xml

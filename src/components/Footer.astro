@@ -1,0 +1,19 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-negro.png';
+import { SITE, type Lang } from '../lib/site';
+import { t } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+---
+<footer class="footer">
+  <Image src={logo} alt={SITE.name} width={112} height={48} densities={[2, 3]} format="webp" loading="lazy" />
+  <div class="footer__links">
+    <a href={SITE.instagram} target="_blank" rel="noopener">Instagram</a>
+    <a href={SITE.facebook} target="_blank" rel="noopener">Facebook</a>
+    <a href={SITE.tiktok} target="_blank" rel="noopener">TikTok</a>
+    <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    <a href={`tel:${SITE.phone.replace(/[^+\d]/g, '')}`}>{SITE.phone}</a>
+  </div>
+  <span>© {new Date().getFullYear()} · {ui.rights}</span>
+</footer>

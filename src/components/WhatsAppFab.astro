@@ -1,0 +1,10 @@
+---
+import { SITE, waLink, type Lang } from '../lib/site';
+import { t } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+---
+<a class="wa-fab" href={waLink(ui.waText)} target="_blank" rel="noopener" aria-label={`${ui.waFloat} ${SITE.phone}`}>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.100-1.300A10 10 0 1 0 12 2z"/></svg>
+  <span>{ui.waFloat}</span>
+</a>

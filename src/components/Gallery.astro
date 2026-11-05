@@ -1,0 +1,72 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import gallery from '../content/gallery.json';
+import { getImg } from '../lib/images';
+import type { Lang } from '../lib/site';
+import { t } from '../i18n/ui';
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+type Item = {
+  type: 'image' | 'video';
+  image?: string; poster?: string; src?: string; youtube?: string; pending?: boolean;
+  alt_es: string; alt_en: string; size?: 'normal' | 'tall' | 'big';
+};
+const items = await Promise.all(
+  (gallery as Item[]).map(async (g) => {
+    const alt = lang === 'es' ? g.alt_es : g.alt_en;
+    const thumb = g.image ?? g.poster!;
+    const playable = g.type === 'video' && !g.pending && !!(g.src || g.youtube);
+    const full = g.type === 'image' ? (await getImage({ src: getImg(g.image!), width: 1800, format: 'webp' })).src : '';
+    return {
+      ...g, alt, thumb, playable, full,
+      src: g.src ? (g.src.startsWith('http') ? g.src : base + g.src) : '',
+      cls: g.size === 'big' ? 'gal--big' : g.size === 'tall' ? 'gal--tall' : '',
+      sizes: g.size === 'big' ? '(min-width: 640px) 410px, 100vw' : '(min-width: 640px) 210px, 50vw',
+    };
+  }),
+);
+---
+<section id="galeria" class="section reveal" data-gallery>
+  <h2 class="h2">{ui.galTitle}</h2>
+  <p class="sub">{ui.galSub}</p>
+  <div class="gallery">
+    {items.map((g, i) => {
+      const photo = <Picture src={getImg(g.thumb)} alt={g.type === 'image' ? g.alt : ''} formats={['avif', 'webp']} widths={[240, 480, 800]} sizes={g.sizes} loading="lazy" decoding="async" />;
+      return g.type === 'video' && !g.playable ? (
+        <div class={`gal gal--pending ${g.cls}`} role="img" aria-label={g.alt}>
+          {photo}
+          <span class="gal__play"><span>▶ {ui.videoSoon}</span></span>
+        </div>
+      ) : (
+        <button
+          type="button"
+          class={`gal ${g.cls}`}
+          data-lb
+          data-type={g.type}
+          data-full={g.full}
+          data-src={g.src}
+          data-youtube={g.youtube ?? ''}
+          data-alt={g.alt}
+          aria-label={g.type === 'video' ? `${ui.video}: ${g.alt}` : g.alt}
+          aria-haspopup="dialog"
+        >
+          {photo}
+          {g.type === 'video' && <span class="gal__play"><span>▶ {ui.video}</span></span>}
+        </button>
+      );
+    })}
+  </div>
+
+  <dialog id="lightbox" class="lb" aria-label={ui.lb.label} data-of={ui.lb.of}>
+    <div class="lb__stage" data-stage></div>
+    <button type="button" class="lb__btn lb__close" aria-label={ui.lb.close} data-lb-close>×</button>
+    <button type="button" class="lb__btn lb__prev" aria-label={ui.lb.prev} data-lb-prev>‹</button>
+    <button type="button" class="lb__btn lb__next" aria-label={ui.lb.next} data-lb-next>›</button>
+    <p class="lb__cap" data-cap aria-live="polite"></p>
+  </dialog>
+</section>
+
+<script src="../scripts/gallery.ts"></script>

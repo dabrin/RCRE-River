@@ -1,0 +1,139 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Photo from '../components/Photo.astro';
+import ToursSection from '../components/ToursSection.astro';
+import Gallery from '../components/Gallery.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { SITE, url, waLink, type Lang } from '../lib/site';
+import { t } from '../i18n/ui';
+import { getCamino } from '../lib/tours';
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const camino = await getCamino(lang);
+const waCamino = lang === 'es' ? 'Hola, quiero consultar fechas del Camino de Costa Rica' : 'Hi, I would like to ask about Camino de Costa Rica dates';
+const agency = {
+  '@context': 'https://schema.org',
+  '@type': 'TravelAgency',
+  name: SITE.name,
+  url: new URL(url(lang), Astro.site).href,
+  logo: new URL('/icon-512.png', Astro.site).href,
+  image: new URL('/og.jpg', Astro.site).href,
+  description: ui.meta.description,
+  email: SITE.email,
+  telephone: SITE.phone,
+  areaServed: 'CR',
+  availableLanguage: ['es', 'en'],
+  sameAs: [SITE.instagram, SITE.facebook, SITE.tiktok],
+};
+---
+<Layout lang={lang} path="" jsonLd={[agency]}>
+  <section class="hero">
+    <div class="hero__main">
+      <Photo class="hero__photo" name="rafting-cascada" alt="" eager sizes="(min-width: 900px) 66vw, 100vw" widths={[640, 960, 1280, 1600, 1920]} />
+      <div class="hero__shade"></div>
+      <div class="hero__body">
+        <span class="chip chip--eyebrow">{ui.eyebrow}</span>
+        <h1>{ui.heroTitle}</h1>
+        <p>{ui.heroSub}</p>
+        <div class="hero__cta">
+          <a class="btn btn--sun" href="#tours">{ui.ctaTours}</a>
+          <a class="btn btn--white" href={waLink(ui.waText)} target="_blank" rel="noopener">{ui.ctaWa}</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero__side">
+      <Photo name="perezoso" alt="" eager sizes="(min-width: 900px) 33vw, 100vw" widths={[480, 800, 1000]} />
+      <div class="hero__row">
+        <Photo name="rana" alt="" sizes="(min-width: 900px) 16vw, 50vw" widths={[320, 640]} />
+        <a class="hero__camino" href="#camino">
+          <small>{ui.caminoEyebrow}</small>
+          <strong>{ui.caminoTitle} →</strong>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--acts reveal" aria-labelledby="acts-h">
+    <h2 class="h2" id="acts-h" style="font-size:clamp(34px,4.5vw,56px)">{ui.actTitle}</h2>
+    <div class="acts">
+      {ui.acts.map((a) => (
+        <div class="act">
+          <Photo name={a.img} sizes="(min-width: 900px) 420px, 100vw" widths={[480, 800]} />
+          <div class="act__body">
+            <h3 class="act__name">{a.name}</h3>
+            <p class="act__txt" style="margin:4px 0 0">{a.txt}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <ToursSection lang={lang} />
+
+  <section id="camino" class="camino reveal">
+    <div class="camino__box">
+      <div class="camino__text">
+        <span class="chip chip--eyebrow">{ui.caminoEyebrow}</span>
+        <h2>{ui.caminoTitle}</h2>
+        <p>{ui.caminoTxt}</p>
+        <ul class="progress" aria-hidden="true">
+          {camino.map((c) => <li style={`flex:${c.stages};background:${c.color}`}></li>)}
+        </ul>
+        <div class="progress-labels"><span>{ui.caribe}</span><span>{ui.pacifico}</span></div>
+        <ol class="stages">
+          {camino.map((s) => (
+            <li class="stage">
+              <span class="stage__n">{s.n}</span>
+              <div>
+                <div class="stage__name">{s.name} · <span>{s.range}</span></div>
+                <div class="stage__txt">{s.text}</div>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <a class="btn btn--sun" href={waLink(waCamino)} target="_blank" rel="noopener">{ui.caminoCta}</a>
+      </div>
+      <Photo class="camino__photo" name="caminata-selva" sizes="(min-width: 900px) 50vw, 100vw" widths={[640, 960, 1280]} />
+    </div>
+  </section>
+
+  <section id="nosotros" class="section reveal">
+    <div class="about">
+      <div class="about__photos">
+        <Photo name="rafting-grupo" sizes="(min-width: 900px) 600px, 100vw" widths={[480, 800, 1200]} />
+        <Photo name="kayak" sizes="(min-width: 900px) 300px, 50vw" widths={[320, 640]} />
+        <Photo name="cacao" sizes="(min-width: 900px) 300px, 50vw" widths={[320, 640]} />
+      </div>
+      <div>
+        <div class="eyebrow">{ui.aboutEyebrow}</div>
+        <h2>{ui.aboutTitle}</h2>
+        <p>{ui.aboutTxt}</p>
+        <div class="values">
+          {ui.values.map((v) => <div class="value"><b>{v.h}</b><span>{v.t}</span></div>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Gallery lang={lang} />
+
+  <section id="contacto" class="contact reveal">
+    <div class="contact__box">
+      <div>
+        <h2>{ui.contactTitle}</h2>
+        <p class="contact__sub">{ui.contactSub}</p>
+        <div class="contact__links">
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a href={waLink(ui.waText)} target="_blank" rel="noopener">WhatsApp {SITE.phone}</a>
+        </div>
+        <div class="socials" aria-label={ui.follow}>
+          <a href={SITE.instagram} target="_blank" rel="noopener">Instagram</a>
+          <a href={SITE.facebook} target="_blank" rel="noopener">Facebook</a>
+          <a href={SITE.tiktok} target="_blank" rel="noopener">TikTok</a>
+        </div>
+      </div>
+      <ContactForm lang={lang} />
+    </div>
+  </section>
+</Layout>

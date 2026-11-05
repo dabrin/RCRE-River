@@ -1,0 +1,27 @@
+---
+import { Picture } from 'astro:assets';
+import { getImg } from '../lib/images';
+
+interface Props {
+  name: string;
+  alt?: string;
+  sizes?: string;
+  widths?: number[];
+  eager?: boolean;
+  class?: string;
+  as?: 'div' | 'span';
+}
+const { name, alt = '', sizes = '100vw', widths = [480, 800, 1200], eager = false, class: cls, as: Tag = 'div' } = Astro.props;
+---
+<Tag class:list={['photo', cls]}>
+  <Picture
+    src={getImg(name)}
+    alt={alt}
+    formats={['avif', 'webp']}
+    widths={widths}
+    sizes={sizes}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding={eager ? 'sync' : 'async'}
+    fetchpriority={eager ? 'high' : undefined}
+  />
+</Tag>
