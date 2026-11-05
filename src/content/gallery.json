@@ -76,14 +76,14 @@
     "image": "canon.jpeg",
     "alt_es": "Cañón de río",
     "alt_en": "River canyon",
-    "size": "normal"
+    "size": "tall"
   },
   {
     "type": "image",
     "image": "atardecer.jpeg",
     "alt_es": "Atardecer",
     "alt_en": "Sunset",
-    "size": "tall"
+    "size": "normal"
   },
   {
     "type": "image",
