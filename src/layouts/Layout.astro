@@ -20,15 +20,16 @@ interface Props {
   jsonLd?: object[];
   ogType?: string;
 }
-const { lang, title, description, path = '', image = '/og.jpg', jsonLd = [], ogType = 'website' } = Astro.props;
+const { lang, title, description, path = '', image, jsonLd = [], ogType = 'website' } = Astro.props;
 const ui = t(lang);
 const site = Astro.site ?? new URL(SITE.url);
 const abs = (p: string) => new URL(p, site).href;
 const alt = { es: url('es', path), en: url('en', path) };
 const metaTitle = title ?? ui.meta.title;
 const metaDesc = description ?? ui.meta.description;
-const ogImage = image.startsWith('http') ? image : abs(image);
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = image ?? `${baseUrl}/og.jpg`;
+const ogImage = img.startsWith('http') ? img : abs(img);
 ---
 <!doctype html>
 <html lang={ui.htmlLang}>

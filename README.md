@@ -66,13 +66,11 @@ El asunto de cada correo es `Web: {nombre}`. Hay validación en el cliente, camp
 ## Despliegue
 
 ### GitHub Pages (por defecto)
-1. Subí el repo a GitHub (rama `main`).
-2. *Settings → Pages → Source: GitHub Actions*.
-3. Cada push a `main` ejecuta `.github/workflows/deploy.yml`.
-4. **Dominio propio:** *Settings → Pages → Custom domain* → `realcostaricaexperiences.com` (el archivo `public/CNAME` ya lo declara). En el DNS del dominio:
-   - `A` apuntando a `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   - `CNAME` de `www` a `USUARIO.github.io`
-5. **Sin dominio propio** (`https://USUARIO.github.io/REPO`): creá las variables de Actions `SITE_URL=https://USUARIO.github.io` y `BASE_PATH=/REPO`, y borrá `public/CNAME`.
+1. En GitHub: *Settings → Pages → Build and deployment → Source: GitHub Actions*.
+2. Cada push a `main` ejecuta `.github/workflows/deploy.yml` y publica en `https://USUARIO.github.io/REPO/`. El workflow detecta la URL y la ruta base solo.
+3. Formulario: *Settings → Secrets and variables → Actions → New repository secret* → `PUBLIC_FORM_KEY`.
+4. **Dominio propio** (`realcostaricaexperiences.com`): primero apuntá el DNS (`A` a `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` y `CNAME` de `www` a `USUARIO.github.io`). Luego creá el archivo `public/CNAME` con el dominio, hacé push y activá *Settings → Pages → Custom domain*. El workflow lo detecta y construye con base `/`.
+   (Variables opcionales de Actions `SITE_URL` y `BASE_PATH` fuerzan otros valores.)
 
 ### Netlify
 *Add new site → Import from Git*. Build command `npm run build`, publish directory `dist`. En *Site settings → Environment variables* agregá `PUBLIC_FORM_KEY`. Dominio en *Domain management*.
